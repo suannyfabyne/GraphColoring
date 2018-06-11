@@ -9,6 +9,8 @@ using namespace std;
 const int MAX = 1000;
 int nElementos; // sfafasfas
 int cores[MAX];
+int auxAdj[MAX];
+int ArrayAux[MAX];
 
 int Verificar(int Array[][1000], int nElementos, int maiorGrau){
 
@@ -28,6 +30,64 @@ int Verificar(int Array[][1000], int nElementos, int maiorGrau){
     }
     return menorCor;
 }
+ 
+void MovimentoVizinhanca(int count, int cores[], int iMaiorCor, int Array[][1000]) {
+
+	int count2 =1;
+    int menorCorAdjacente;
+
+    while(count > 0 && cores[iMaiorCor] == ArrayAux[iMaiorCor]){
+
+      ArrayAux[iMaiorCor] = 0;
+      ArrayAux[auxAdj[count2]] = 0;
+
+
+      menorCorAdjacente = Verificar(Array, nElementos, iMaiorCor); //Menor cor possível dos adjacentes ao vertice de maior cor 
+      ArrayAux[iMaiorCor] = menorCorAdjacente;
+      cout << "Nova menor cor do vertice de maior cor "  << menorCorAdjacente;
+
+
+      menorCorAdjacente = Verificar(Array, nElementos, auxAdj[count2]); //Menor cor possível dos adjacentes ao adjacente do vertice de maior cor 
+      ArrayAux[auxAdj[count2]] = menorCorAdjacente;
+      cout << "Nova menor cor do vertice adjacente ao de maior cor " << menorCorAdjacente;
+      count2++;
+      count--;
+
+    }
+
+
+
+}
+
+
+int IndicesAdjacentes(int Array[][1000], int nElementos, int iMaiorCor) {
+
+    int count = 0;
+    int auxAdj[nElementos];
+    for (int i = 1; i <= nElementos; i++) //Percorre vertices e guarda o índice de seus adjacentes
+    { 
+
+      if (Array[iMaiorCor][i] == 1)
+      {
+          count++;
+          auxAdj[count] = i;
+      }
+    }
+
+    return count;
+}
+
+
+int ExibirCores(int cores[], int nElementos){
+
+    for (int i = 1; i <= nElementos; ++i)
+    {
+      // cout << i << "  " << cores[i] << endl;
+    }
+
+
+}
+
 
 
 
@@ -120,67 +180,28 @@ int main() {
 
 
     Colorir(Grau, Array, nElementos);
-    for (int i = 1; i <= nElementos; ++i)
-    {
-       //cout << i << "  " << cores[i] << endl;
-    }
+    ExibirCores(cores, nElementos);
 
     int maiorValor;
     maiorValor = MaiorValor(cores, nElementos);
-    cout<< "numero de cores: "<< cores[maiorValor] << endl;
+    cout<< "N° de cores (sem refinamento): "<< cores[maiorValor] << endl;
 
     int ArrayAux[nElementos];
 
-    for (int i = 1; i <= nElementos; i++)
-    {
+    for (int i = 1; i <= nElementos; i++) {
       ArrayAux[i]= cores[i];
     }
 
     int iMaiorCor = MaiorValor(ArrayAux, nElementos);
 
-    cout << "indice maior cor: " <<iMaiorCor << endl;
+    cout << "Vertice/indice que possui a maior cor (sem refinamento): " << iMaiorCor << endl;
 
-    int auxAdj[nElementos];
-    int count;
-
-    for (int i = 1; i <= nElementos; i++)//4656546
-    { 
-
-      if (Array[iMaiorCor][i] == 1)
-      {
-          count++;
-          auxAdj[count] = i;
-      }
-    }
-
-    int count2 =1;
-
-    while(count > 0 && cores[iMaiorCor] == ArrayAux[iMaiorCor]){
-
-      ArrayAux[iMaiorCor] = 0;
-      ArrayAux[auxAdj[count2]] = 0;
-
-      int menorCor2 = Verificar(Array, nElementos, iMaiorCor);
-      ArrayAux[iMaiorCor] = menorCor2;
-
-      cout << "indice menor cor: " << menorCor2 << endl;
-      //cout << "dfjggsdfkgsdflsdgf" << ArrayAux[216] << endl;
-      int menorCor3 = Verificar(Array, nElementos, auxAdj[count2]);
-      ArrayAux[auxAdj[count2]] = menorCor3;
-      cout << "indice menor cor: " << menorCor3 << " do adjacente "<< count2 << endl;
-
-      count2++;
-      count--;
-    }
-
-   for (int i = 1; i <= nElementos; ++i)
-    {
-       //cout << i << "  " << ArrayAux[i] << endl;
-    }
-
+    int count = IndicesAdjacentes(Array, nElementos, iMaiorCor); //Verifica os vertices adjacentes ao indice de maior cor e retorna a quantidade de adjacentes a ele
+    MovimentoVizinhanca(count, cores, iMaiorCor, Array);
+   	ExibirCores(ArrayAux, nElementos);
     iMaiorCor = MaiorValor(ArrayAux, nElementos);
 
-    cout << "indice maior cor: " <<iMaiorCor << endl;
+    cout << "Vertice/indice maior cor (depois do refinamento): " <<iMaiorCor << endl;
 
     return 0;
 }
