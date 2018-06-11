@@ -27,14 +27,9 @@ int Verificar(int Array[][1000], int nElementos, int maiorGrau){
       }
     }
     return menorCor;
-<<<<<<< HEAD
 }
 
 
-=======
-
-}
->>>>>>> 37fc08b1d3f6842aeff94e007f72106e697b020f
 
 int MaiorValor(int Grau[], int nElementos) { //dfsdfsdfsdf
 
@@ -63,7 +58,6 @@ void Colorir(int Grau[], int Array[][1000], int nElementos){
 
     while(vertices > 0){
       maiorGrau = MaiorValor(Grau, nElementos);
-<<<<<<< HEAD
       //cout << "opa1" << endl;
       //cout << "maiorGrau"<< maiorGrau << endl;
       Grau[maiorGrau] = 0;
@@ -74,26 +68,11 @@ void Colorir(int Grau[], int Array[][1000], int nElementos){
       //cout << "vertices "<< vertices << endl;
       //cout << "maiorGrau "<< maiorGrau << endl;
       //cout << "cor " << cores[maiorGrau] << endl;
-=======
-      cout << "opa1" << endl;
-      cout << "maiorGrau"<< maiorGrau << endl;
-      Grau[maiorGrau] = 0;
-      int menorCor = Verificar(Array, nElementos, maiorGrau);
-      cout << "opa2" << endl;
-      cores[maiorGrau] = menorCor;
-      vertices--;
-      cout << "vertices "<< vertices << endl;
-      cout << "maiorGrau "<< maiorGrau << endl;
-      cout << "cor " << cores[maiorGrau] << endl;
->>>>>>> 37fc08b1d3f6842aeff94e007f72106e697b020f
     }
 
 }
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 37fc08b1d3f6842aeff94e007f72106e697b020f
 int main() {
     ifstream file("instancia2.txt");
     string line;
@@ -143,18 +122,13 @@ int main() {
     Colorir(Grau, Array, nElementos);
     for (int i = 1; i <= nElementos; ++i)
     {
-<<<<<<< HEAD
        //cout << i << "  " << cores[i] << endl;
-=======
-       cout << i << "  " << cores[i] << endl;
->>>>>>> 37fc08b1d3f6842aeff94e007f72106e697b020f
     }
 
     int maiorValor;
     maiorValor = MaiorValor(cores, nElementos);
     cout<< "numero de cores: "<< cores[maiorValor] << endl;
 
-<<<<<<< HEAD
     int ArrayAux[nElementos];
 
     for (int i = 1; i <= nElementos; i++)
@@ -208,7 +182,5 @@ int main() {
 
     cout << "indice maior cor: " <<iMaiorCor << endl;
 
-=======
->>>>>>> 37fc08b1d3f6842aeff94e007f72106e697b020f
     return 0;
 }
