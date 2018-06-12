@@ -33,7 +33,11 @@ int Verificar(int Array[][1000], int nElementos, int maiorGrau){
  
 void MovimentoVizinhanca(int count, int cores[], int iMaiorCor, int Array[][1000]) {
 
+<<<<<<< HEAD
   int count2 =1;
+=======
+	int count2 =1;
+>>>>>>> e19e33c57202f15e70a0554704b385a93adc13e1
     int menorCorAdjacente;
 
     while(count > 0 && cores[iMaiorCor] == ArrayAux[iMaiorCor]){
@@ -56,6 +60,7 @@ void MovimentoVizinhanca(int count, int cores[], int iMaiorCor, int Array[][1000
     }
 
 
+<<<<<<< HEAD
 
 }
 
@@ -85,10 +90,44 @@ int ExibirCores(int cores[], int nElementos){
       // cout << i << "  " << cores[i] << endl;
     }
 
+=======
+>>>>>>> e19e33c57202f15e70a0554704b385a93adc13e1
 
 }
 
 
+<<<<<<< HEAD
+=======
+int IndicesAdjacentes(int Array[][1000], int nElementos, int iMaiorCor) {
+
+    int count = 0;
+    int auxAdj[nElementos];
+    for (int i = 1; i <= nElementos; i++) //Percorre vertices e guarda o índice de seus adjacentes
+    { 
+
+      if (Array[iMaiorCor][i] == 1)
+      {
+          count++;
+          auxAdj[count] = i;
+      }
+    }
+
+    return count;
+}
+
+
+int ExibirCores(int cores[], int nElementos){
+
+    for (int i = 1; i <= nElementos; ++i)
+    {
+      // cout << i << "  " << cores[i] << endl;
+    }
+
+
+}
+
+
+>>>>>>> e19e33c57202f15e70a0554704b385a93adc13e1
 
 
 int MaiorValor(int Grau[], int nElementos) { //dfsdfsdfsdf
@@ -198,10 +237,17 @@ int main() {
 
     int count = IndicesAdjacentes(Array, nElementos, iMaiorCor); //Verifica os vertices adjacentes ao indice de maior cor e retorna a quantidade de adjacentes a ele
     MovimentoVizinhanca(count, cores, iMaiorCor, Array);
+<<<<<<< HEAD
     ExibirCores(ArrayAux, nElementos);
     iMaiorCor = MaiorValor(ArrayAux, nElementos);
 
     cout << "Vertice/indice maior cor (depois do refinamento): " << iMaiorCor << endl;
+=======
+   	ExibirCores(ArrayAux, nElementos);
+    iMaiorCor = MaiorValor(ArrayAux, nElementos);
+
+    cout << "Vertice/indice maior cor (depois do refinamento): " <<iMaiorCor << endl;
+>>>>>>> e19e33c57202f15e70a0554704b385a93adc13e1
 
     return 0;
 }
