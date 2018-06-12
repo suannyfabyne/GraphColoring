@@ -12,6 +12,30 @@ int cores[MAX];
 int auxAdj[MAX];
 int ArrayAux[MAX];
 
+int VerificarVizinhanca(int Array[][1000], int nElementos, int vertice, int iMaiorCor, int ArrayNCores[]){
+
+    int menorCor = 1;
+
+    for (int i = 1; i <= nElementos; i++)//4656546
+    {
+
+      if (Array[vertice][i] == 1 )
+      {
+          if (cores[i] == menorCor || menorCor == cores[vertice] || ArrayNCores[i] == -1)
+          {
+            menorCor++;
+            i = 1; //fsdfsdfsdfsd
+          }
+
+      }
+    }
+
+    if(menorCor > cores[iMaiorCor]) {
+          return cores[vertice];
+    }
+    else return menorCor;
+}
+
 int Verificar(int Array[][1000], int nElementos, int maiorGrau){
 
     int menorCor = 1;
@@ -33,11 +57,7 @@ int Verificar(int Array[][1000], int nElementos, int maiorGrau){
  
 void MovimentoVizinhanca(int count, int cores[], int iMaiorCor, int Array[][1000]) {
 
-<<<<<<< HEAD
-  int count2 =1;
-=======
 	int count2 =1;
->>>>>>> e19e33c57202f15e70a0554704b385a93adc13e1
     int menorCorAdjacente;
 
     while(count > 0 && cores[iMaiorCor] == ArrayAux[iMaiorCor]){
@@ -60,8 +80,6 @@ void MovimentoVizinhanca(int count, int cores[], int iMaiorCor, int Array[][1000
     }
 
 
-<<<<<<< HEAD
-
 }
 
 
@@ -87,47 +105,12 @@ int ExibirCores(int cores[], int nElementos){
 
     for (int i = 1; i <= nElementos; ++i)
     {
-      // cout << i << "  " << cores[i] << endl;
+       //cout << i << "  " << cores[i] << endl;
     }
-
-=======
->>>>>>> e19e33c57202f15e70a0554704b385a93adc13e1
 
 }
 
 
-<<<<<<< HEAD
-=======
-int IndicesAdjacentes(int Array[][1000], int nElementos, int iMaiorCor) {
-
-    int count = 0;
-    int auxAdj[nElementos];
-    for (int i = 1; i <= nElementos; i++) //Percorre vertices e guarda o índice de seus adjacentes
-    { 
-
-      if (Array[iMaiorCor][i] == 1)
-      {
-          count++;
-          auxAdj[count] = i;
-      }
-    }
-
-    return count;
-}
-
-
-int ExibirCores(int cores[], int nElementos){
-
-    for (int i = 1; i <= nElementos; ++i)
-    {
-      // cout << i << "  " << cores[i] << endl;
-    }
-
-
-}
-
-
->>>>>>> e19e33c57202f15e70a0554704b385a93adc13e1
 
 
 int MaiorValor(int Grau[], int nElementos) { //dfsdfsdfsdf
@@ -227,6 +210,7 @@ int main() {
 
     int ArrayAux[nElementos];
 
+    /*****MOVIMENTO DE VIZINHANÇA 1******/
     for (int i = 1; i <= nElementos; i++) {
       ArrayAux[i]= cores[i];
     }
@@ -237,17 +221,110 @@ int main() {
 
     int count = IndicesAdjacentes(Array, nElementos, iMaiorCor); //Verifica os vertices adjacentes ao indice de maior cor e retorna a quantidade de adjacentes a ele
     MovimentoVizinhanca(count, cores, iMaiorCor, Array);
-<<<<<<< HEAD
     ExibirCores(ArrayAux, nElementos);
     iMaiorCor = MaiorValor(ArrayAux, nElementos);
-
     cout << "Vertice/indice maior cor (depois do refinamento): " << iMaiorCor << endl;
-=======
    	ExibirCores(ArrayAux, nElementos);
     iMaiorCor = MaiorValor(ArrayAux, nElementos);
 
     cout << "Vertice/indice maior cor (depois do refinamento): " <<iMaiorCor << endl;
->>>>>>> e19e33c57202f15e70a0554704b385a93adc13e1
+    /*****TERMINOU MOVIMENTO DE VIZINHANÇA 1******/
 
+
+
+
+    int Matrix[cores[iMaiorCor]+1][nElementos] = {{0}};
+    int menorCorVizinhanca;
+
+    for (int i = 1; i <= cores[iMaiorCor]+1; i++)
+    {
+      for (int j = 1; j <= nElementos; j++)
+      {
+          if (cores[j] == i) Matrix[i][j] = 1;
+      }
+
+    }
+
+
+    int contador = 0;
+    int contador2 = 0;
+    int nCoresXau = 0;
+    int loop = 2;
+    int NovaMaiorCor=iMaiorCor;
+    int ArrayNCores[cores[iMaiorCor]] = {1};
+
+//for (int q = 0; q < 5; ++q)
+//{
+  /* code */
+
+      for (int i = 1; i <= cores[NovaMaiorCor]; i++)
+      {
+        for (int j = 1; j <= nElementos; ++j)
+        {
+            if(Matrix[i][j] == 1) {
+
+             // cout << j << " Cor antes: " << ArrayAux[j] << endl;
+              //cout << "Cor: " << i << " Vertice: "<< j << endl; 
+              menorCorVizinhanca = VerificarVizinhanca(Array, nElementos, j, NovaMaiorCor, ArrayNCores); 
+
+              if (menorCorVizinhanca != cores[j])
+              {
+                //cout << j << " Cor antes: " << ArrayAux[j] << endl;
+                ArrayAux[j] = menorCorVizinhanca;
+                //cout << j << " Cor depois: " << ArrayAux[j] << endl;
+                contador++;
+
+              }
+              contador2++;
+            }
+        } 
+
+        if (contador == contador2) {
+
+          nCoresXau++;
+
+          for (int j = 1; j <= nElementos; ++j)
+          {
+            cores[j] = ArrayAux[j];
+
+            if(Matrix[i][j] = 1){
+            Matrix[i][j] = 0; 
+           // Matrix[menorCorVizinhanca][j] = 1;
+            
+            //cout << "Cor anterior :" << i <<endl;
+            //cout << "Cor atual :" << menorCorVizinhanca <<endl;
+          }
+
+            //cout << "cor deletada " << i << endl;
+          }
+
+         
+        ArrayNCores[i] = -1;
+        cout << ArrayNCores[i] << " Sinal q foi deletado! cor :"  << i << endl;
+        break;
+        }
+        else {
+
+          for (int j = 1; j <= nElementos; ++j)
+          {
+            ArrayAux[j] = cores[j];  
+
+          }
+
+        }
+        contador2 = 0;
+        contador = 0;
+        //cout << nCoresXau << " N cores" << endl;
+        } 
+      //cout << "Nova Maior Cor"<<cores[NovaMaiorCor] << endl;
+
+
+    for (int i = 1; i < nElementos; ++i)
+    {
+        cout << i << " " << cores[i] << endl;
+    }
+//}
+   NovaMaiorCor = MaiorValor(cores, nElementos);
+   cout << "Numero de cores após movimento de vizinhança: " << cores[NovaMaiorCor] - nCoresXau << endl;
     return 0;
 }
