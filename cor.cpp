@@ -2,7 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-
+#include <time.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -11,6 +12,8 @@ int nElementos; // sfafasfas
 int cores[MAX];
 int auxAdj[MAX];
 int ArrayAux[MAX];
+int ArrayColoriveis[MAX];
+int melhoresCores[MAX];
 
 int VerificarVizinhanca(int Array[][1000], int nElementos, int vertice, int iMaiorCor, int ArrayNCores[]){
 
@@ -127,6 +130,82 @@ int MaiorValor(int Grau[], int nElementos) { //dfsdfsdfsdf
   //cout << "maiorGrau "<< maiorGrau << endl;
 }
 
+int MenorValor(int Grau[], int nElementos, int maiorGrau) { //dfsdfsdfsdf
+
+  int aux = Grau[maiorGrau];
+  int menorGrau;
+  int aux2 = maiorGrau;
+  for (int i = nElementos; i > 0; i--){
+
+    if (Grau[i] < aux && Grau[i]!=0){
+        aux = Grau[i];
+        aux2 = i;
+    }
+  }
+  menorGrau = aux2;
+  return menorGrau;
+  //cout << "aux2 "<< aux2 << endl;
+  //cout << "maiorGrau "<< maiorGrau << endl;
+}
+
+
+int ListarColoriveis(int Grau[], int nElementos, int alfa) { //dfsdfsdfsdf
+
+  int count = 0;
+  for (int i = 1; i <= nElementos; ++i)
+  {
+    if(Grau[i] >= alfa){
+      ArrayColoriveis[count] = i;
+      count++;
+
+    }
+  }
+
+  return count;
+}
+
+void ColorirMetaH(int Grau[], int Array[][1000], int nElementos, double multiplicador){
+    int rand (void);
+
+  int numeroDeCores = 0;
+  int vertices = nElementos;
+  int maiorGrau;
+  int menorGrau;
+  int nColoriveis;
+  int random;
+  int verticegrau;
+  int alfa;
+  while(vertices > 0){
+
+    maiorGrau = MaiorValor(Grau, nElementos);
+    menorGrau = MenorValor(Grau, nElementos, maiorGrau);
+
+    //cout << "opa1" << endl;
+    //cout << "maiorGrau"<< maiorGrau << endl;
+    alfa = ((Grau[maiorGrau] - Grau[menorGrau])*multiplicador)+Grau[menorGrau];
+
+    //cout << Grau[menorGrau] << " menor grau" << endl;
+    //cout << Grau[maiorGrau] << " maior grau" << endl;
+
+
+    nColoriveis = ListarColoriveis(Grau, nElementos, alfa);
+    random = rand() % (nColoriveis);
+    //cout << nColoriveis << "numero de nElementos" <<endl;
+    verticegrau = ArrayColoriveis[random];
+    Grau[verticegrau] = 0;
+
+    //cout << verticegrau << "Vertice a ser colorido: " << endl;
+
+    int menorCor = Verificar(Array, nElementos, verticegrau);
+    //cout << "opa2" << endl;
+    cores[verticegrau] = menorCor;
+    vertices--;
+    //cout << "vertices "<< vertices << endl;
+    //cout << "maiorGrau "<< maiorGrau << endl;
+    //cout << "cor " << cores[maiorGrau] << endl;
+  }
+
+}
 
 void Colorir(int Grau[], int Array[][1000], int nElementos){
   
@@ -155,7 +234,9 @@ int main() {
   ifstream file("instancia6.txt");
   string line;
   int Array[1000][1000] = {{0}};
+  double multiplicador;
 
+  cin >> multiplicador;
 
   while(getline(file, line)) {
     string var, edge;
@@ -179,130 +260,169 @@ int main() {
 
 
   int Grau[nElementos];
-
-  for (int from = 1; from <= nElementos; ++from)
-  {
-    int cont = 1; 
-    for (int to = 1; to <= nElementos; ++to)
-    { 
-        if (Array[from][to] == 1)
-        {
-          Grau[from] = cont;
-          cont++;
-        }
-    }
-  }
-
-  Colorir(Grau, Array, nElementos);
-  ExibirCores(cores, nElementos);
-
-  int maiorValor;
-  maiorValor = MaiorValor(cores, nElementos);
-  cout<< "N° de cores (sem refinamento): "<< cores[maiorValor] << endl;
-
-  int ArrayAux[nElementos];
-
-  /*****MOVIMENTO DE VIZINHANÇA 1******/
-  for (int i = 1; i <= nElementos; i++) {
-    ArrayAux[i]= cores[i];
-  }
-
-  int iMaiorCor = MaiorValor(ArrayAux, nElementos);
-
-  cout << "Vertice/indice que possui a maior cor (sem refinamento): " << iMaiorCor << endl;
-
-  //int count = IndicesAdjacentes(Array, nElementos, iMaiorCor); //Verifica os vertices adjacentes ao indice de maior cor e retorna a quantidade de adjacentes a ele
-  //MovimentoVizinhanca(count, cores, iMaiorCor, Array);
-  //ExibirCores(ArrayAux, nElementos);
-  //iMaiorCor = MaiorValor(ArrayAux, nElementos);
-  //cout << "Vertice/indice maior cor (depois do refinamento): " << iMaiorCor << endl;
-  //ExibirCores(ArrayAux, nElementos);
-  //iMaiorCor = MaiorValor(ArrayAux, nElementos);
-
-  //cout << "Vertice/indice maior cor (depois do refinamento): " <<iMaiorCor << endl;
-  /*****TERMINOU MOVIMENTO DE VIZINHANÇA 1******/
-
-  int Matrix[cores[iMaiorCor]+1][nElementos] = {{0}};
-  int menorCorVizinhanca;
-
-  for (int i = 1; i <= cores[iMaiorCor]+1; i++)
-  {
-    for (int j = 1; j <= nElementos; j++)
-    {
-        if (cores[j] == i) Matrix[i][j] = 1;
-    }
-  }
-
-  int contador = 0;
-  int contador2 = 0;
-  int nCoresXau = 0;
-  int NovaMaiorCor=iMaiorCor;
-  int ArrayNCores[cores[iMaiorCor]] = {1};
-
-  for (int i = 1; i <= cores[NovaMaiorCor]; i++)
-  {
-    for (int j = 1; j <= nElementos; ++j){
-
-      if(Matrix[i][j] == 1) {
-
-      // cout << j << " Cor antes: " << ArrayAux[j] << endl;
-      //cout << "Cor: " << i << " Vertice: "<< j << endl; 
-      menorCorVizinhanca = VerificarVizinhanca(Array, nElementos, j, NovaMaiorCor, ArrayNCores); 
-
-      if (menorCorVizinhanca != cores[j])
-        {
-          //cout << j << " Cor antes: " << ArrayAux[j] << endl;
-          ArrayAux[j] = menorCorVizinhanca;
-          //cout << j << " Cor depois: " << ArrayAux[j] << endl;
-          contador++;
-        }
-        contador2++;
-      }
-    } 
-
-    if (contador == contador2 && contador != 0) {
-
-      nCoresXau++;
-
-      for (int j = 1; j <= nElementos; ++j){
-
-        cores[j] = ArrayAux[j];
-
-        if(Matrix[i][j] = 1){
-            
-          Matrix[i][j] = 0; 
-          Matrix[menorCorVizinhanca][j] = 1;
-          
-          //cout << "Cor anterior :" << i <<endl;
-          //cout << "Cor atual :" << menorCorVizinhanca <<endl;
-        }
-          //cout << "cor deletada " << i << endl;
-      }
-
-      ArrayNCores[i] = -1;
-      cout << ArrayNCores[i] << " Sinal q foi deletado! cor :"  << i << endl;
-      i=1;
-
-    }
-    else {
-
-      for (int j = 1; j <= nElementos; ++j)
+  int loop = 100;
+  int menorGRASP = 0;
+  int melhorcor;
+    while(loop) {
+      for (int from = 1; from <= nElementos; ++from)
       {
-        ArrayAux[j] = cores[j];  
+        int cont = 1; 
+        for (int to = 1; to <= nElementos; ++to)
+        { 
+            if (Array[from][to] == 1)
+            {
+              Grau[from] = cont;
+              cont++;
+            }
+        }
+      }
+      //cout << MenorValor(Grau, nElementos) << "ZZZZ" << endl;
+
+      for (int i = 1; i <= nElementos; ++i)
+      {
+        cores[i] = 0;
+      }
+
+      ColorirMetaH(Grau, Array, nElementos, multiplicador);
+      //ExibirCores(cores, nElementos);
+
+      int maiorValor;
+      maiorValor = MaiorValor(cores, nElementos);
+      cout<< "N° de cores (sem refinamento): "<< cores[maiorValor] << endl;
+
+      int ArrayAux[nElementos];
+
+      /*****MOVIMENTO DE VIZINHANÇA 1******/
+    /*  for (int i = 1; i <= nElementos; i++) {
+        ArrayAux[i]= cores[i];
+      }*/
+
+      int iMaiorCor = MaiorValor(ArrayAux, nElementos);
+
+      //cout << "Vertice/indice que possui a maior cor (sem refinamento): " << iMaiorCor << endl;
+
+      //int count = IndicesAdjacentes(Array, nElementos, iMaiorCor); //Verifica os vertices adjacentes ao indice de maior cor e retorna a quantidade de adjacentes a ele
+      //MovimentoVizinhanca(count, cores, iMaiorCor, Array);
+      //ExibirCores(ArrayAux, nElementos);
+      //iMaiorCor = MaiorValor(ArrayAux, nElementos);
+      //cout << "Vertice/indice maior cor (depois do refinamento): " << iMaiorCor << endl;
+      //ExibirCores(ArrayAux, nElementos);
+      //iMaiorCor = MaiorValor(ArrayAux, nElementos);
+
+      //cout << "Vertice/indice maior cor (depois do refinamento): " <<iMaiorCor << endl;
+      /*****TERMINOU MOVIMENTO DE VIZINHANÇA 1******/
+
+      int Matrix[cores[iMaiorCor]+1][nElementos] = {{0}};
+      int menorCorVizinhanca;
+
+      for (int i = 1; i <= cores[iMaiorCor]+1; i++)
+      {
+        for (int j = 1; j <= nElementos; j++)
+        {
+            if (cores[j] == i) Matrix[i][j] = 1;
+        }
+      }
+
+      int contador = 0;
+      int contador2 = 0;
+      int nCoresXau = 0;
+      int NovaMaiorCor=iMaiorCor;
+      int ArrayNCores[cores[iMaiorCor]] = {1};
+
+
+      for (int i = 1; i <= cores[NovaMaiorCor]; i++)
+      {
+        for (int j = 1; j <= nElementos; ++j){
+
+          if(Matrix[i][j] == 1) {
+
+          //cout << j << " Cor antes: " << ArrayAux[j] << endl;
+          //cout << "Cor: " << i << " Vertice: "<< j << endl; 
+          menorCorVizinhanca = VerificarVizinhanca(Array, nElementos, j, NovaMaiorCor, ArrayNCores); 
+
+          if (menorCorVizinhanca != cores[j])
+            {
+              //cout << j << " Cor antes: " << ArrayAux[j] << endl;
+              ArrayAux[j] = menorCorVizinhanca;
+              //cout << j << " Cor depois: " << ArrayAux[j] << endl;
+              contador++;
+            }
+            contador2++;
+          }
+        } 
+
+        if (contador == contador2 && contador != 0) {
+
+          nCoresXau++;
+
+          for (int j = 1; j <= nElementos; ++j){
+
+            cores[j] = ArrayAux[j];
+
+            if(Matrix[i][j] = 1){
+                
+              Matrix[i][j] = 0; 
+              Matrix[menorCorVizinhanca][j] = 1;
+              
+              //cout << "Cor anterior: " << i <<endl;
+              //cout << "Cor atual: " << menorCorVizinhanca <<endl;
+            }
+              //cout << "cor deletada " << i << endl;
+          }
+
+          ArrayNCores[i] = -1;
+          cout << ArrayNCores[i] << " Sinal q foi deletado! cor: "  << i << endl;
+          i=1;
+
+        }
+        else {
+
+          for (int j = 1; j <= nElementos; ++j)
+          {
+            ArrayAux[j] = cores[j];  
+
+          }
+        }
+
+      contador2 = 0;
+      contador = 0;
+          
+      //cout << nCoresXau << " N cores" << endl;
+      } 
+      //cout << "Nova Maior Cor"<<cores[NovaMaiorCor] << endl;
+
+      //ExibirCores(cores, nElementos);
+
+      NovaMaiorCor = MaiorValor(cores, nElementos);
+      cout << "Numero de cores após movimento de vizinhança: " << cores[NovaMaiorCor] - nCoresXau << endl;
+      melhorcor = cores[NovaMaiorCor] - nCoresXau;
+
+      if(menorGRASP == 0) {
+
+        menorGRASP = melhorcor; 
+
+        for (int i = 1; i <= nElementos; ++i)
+        {
+          melhoresCores[i] = cores[i];
+        }
+      }
+
+      if(menorGRASP > melhorcor) {
+
+        menorGRASP = melhorcor;
+
+        for (int i = 1; i <= nElementos; ++i)
+        {
+          melhoresCores[i] = cores[i];
+        }
 
       }
+
+      loop--;
     }
 
-  contador2 = 0;
-  contador = 0;
-      
-  //cout << nCoresXau << " N cores" << endl;
-  } 
-  //cout << "Nova Maior Cor"<<cores[NovaMaiorCor] << endl;
+        cout << "Melhor cor: " << menorGRASP << endl;
+        ExibirCores(melhoresCores, nElementos);
 
-  ExibirCores(cores, nElementos);
-
-  NovaMaiorCor = MaiorValor(cores, nElementos);
-  cout << "Numero de cores após movimento de vizinhança: " << cores[NovaMaiorCor] - nCoresXau << endl;
   return 0;
 }
